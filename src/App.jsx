@@ -127,7 +127,7 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-screen bg-[#9CB299] text-[#233229] font-sans p-4 md:p-6 gap-6 overflow-hidden">
+    <div className="flex min-h-screen flex-col bg-[#9CB299] p-3 font-sans text-[#233229] md:h-screen md:flex-row md:gap-6 md:overflow-hidden md:p-6">
       {currentUser.role === 'ADMIN' && <AdminPortal user={currentUser} onLogout={() => {setCurrentUser(null); setLoginId(''); setPassword('');}} />}
       {currentUser.role === 'DOCTOR' && <DoctorPortal user={currentUser} onLogout={() => {setCurrentUser(null); setLoginId(''); setPassword('');}} />}
       {currentUser.role === 'PATIENT' && <PatientPortal user={currentUser} onLogout={() => {setCurrentUser(null); setLoginId(''); setPassword('');}} />}
@@ -177,13 +177,13 @@ function AdminPortal({ user, onLogout }) {
       { icon: Users, label: 'Staff Directory', active: viewMode === 'staff' },
       { icon: ShieldCheck, label: 'Security & Audit', active: viewMode === 'security' },
     ]}>
-      <div className="p-2 w-full h-full overflow-y-auto">
-        {viewMode === 'overview' && <div className="flex justify-between items-center mb-8 px-2">
+      <div className="h-full w-full overflow-y-auto p-2">
+        {viewMode === 'overview' && <div className="mb-8 flex flex-col items-stretch gap-4 px-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight">System Overview</h1>
             <p className="text-[#5A7A62] font-medium mt-1">Manage global hospital settings and personnel.</p>
           </div>
-          <button type="button" onClick={() => setShowAddProvider(true)} className="bg-[#233229] text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-[#1a251e] transition-colors flex items-center gap-2 shadow-lg">
+          <button type="button" onClick={() => setShowAddProvider(true)} className="flex w-full items-center justify-center gap-2 rounded-full bg-[#233229] px-6 py-3 text-sm font-bold text-white shadow-lg transition-colors hover:bg-[#1a251e] sm:w-auto">
             <UserPlus size={18} /> Add Provider
           </button>
         </div>}
@@ -194,8 +194,8 @@ function AdminPortal({ user, onLogout }) {
             <p className="text-[#5A7A62] font-medium mt-1 mb-8">Review providers registered in the Lexis system.</p>
             <WidgetCard className="p-0 overflow-hidden">
               {providers.map((doctor) => (
-                <div key={doctor.id} className="flex items-center justify-between border-b border-[#E4EDE5] p-5 last:border-b-0">
-                  <div><p className="font-extrabold">{doctor.name}</p><p className="text-sm font-medium text-[#5A7A62]">{doctor.specialty} · {doctor.email}</p></div>
+                <div key={doctor.id} className="flex flex-col gap-3 border-b border-[#E4EDE5] p-5 last:border-b-0 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-w-0"><p className="break-words font-extrabold">{doctor.name}</p><p className="break-words text-sm font-medium text-[#5A7A62]">{doctor.specialty} · {doctor.email}</p></div>
                   <PillTag label={doctor.available ? 'Available' : 'Unavailable'} active={doctor.available} />
                 </div>
               ))}
@@ -267,8 +267,8 @@ function AdminPortal({ user, onLogout }) {
       </div>
 
       {showAddProvider && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#233229]/50 p-4" onMouseDown={(e) => e.target === e.currentTarget && setShowAddProvider(false)}>
-          <form onSubmit={handleAddProvider} className="w-full max-w-lg rounded-[32px] bg-white p-6 shadow-2xl md:p-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[#233229]/50 p-4" onMouseDown={(e) => e.target === e.currentTarget && setShowAddProvider(false)}>
+          <form onSubmit={handleAddProvider} className="my-auto w-full max-w-lg rounded-[32px] bg-white p-6 shadow-2xl md:p-8">
             <div className="mb-6 flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#5A7A62]">Staff directory</p>
@@ -341,16 +341,16 @@ function DoctorPortal({ user, onLogout }) {
       { icon: FileText, label: 'Clinical Chart', active: viewMode === 'clinical' && !!selectedPatient },
       { icon: Calendar, label: 'Schedule', active: viewMode === 'schedule' },
     ]}>
-      <div className="p-2 w-full h-full overflow-y-auto">
+      <div className="h-full w-full overflow-y-auto p-2">
         {viewMode === 'patients' ? (
           // Doctor Patient Registry
           <>
-            <div className="flex justify-between items-end mb-8 px-2">
+            <div className="mb-8 flex flex-col items-stretch gap-4 px-2 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <h1 className="text-3xl font-extrabold tracking-tight">Patient Registry</h1>
                 <p className="text-[#5A7A62] font-medium mt-1">Select a patient to view clinical records.</p>
               </div>
-              <div className="relative w-72">
+              <div className="relative w-full sm:w-72">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#5A7A62]" size={18} />
                 <input type="text" placeholder="Search patients..." className="w-full pl-12 pr-4 py-3 bg-white rounded-full focus:outline-none focus:ring-4 focus:ring-[#9CB299]/30 transition-all font-bold text-sm shadow-sm" />
               </div>
@@ -644,12 +644,12 @@ function DoctorPortal({ user, onLogout }) {
         ) : viewMode === 'schedule' ? (
           // Schedule View
           <div className="pb-12">
-            <div className="flex justify-between items-end mb-8 px-2">
+            <div className="mb-8 flex flex-col items-stretch gap-4 px-2 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <h1 className="text-3xl font-extrabold tracking-tight">Schedule & Appointments</h1>
                 <p className="text-[#5A7A62] font-medium mt-1">Manage your clinic schedule and upcoming appointments.</p>
               </div>
-              <button className="bg-[#233229] text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-[#1a251e] transition-colors flex items-center gap-2 shadow-lg">
+              <button className="flex w-full items-center justify-center gap-2 rounded-full bg-[#233229] px-6 py-3 text-sm font-bold text-white shadow-lg transition-colors hover:bg-[#1a251e] sm:w-auto">
                 <Plus size={18} /> New Appointment
               </button>
             </div>
@@ -706,7 +706,7 @@ function DoctorPortal({ user, onLogout }) {
                     { date: 'June 20, 2024', time: '3:30 PM', patient: 'Amit Kumar', specialist: 'Orthopedics' },
                   ].map((apt, idx) => (
                     <WidgetCard key={idx} className="cursor-pointer hover:shadow-xl transition-all">
-                      <div className="flex items-center justify-between">
+                      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 rounded-full bg-[#E4EDE5] flex items-center justify-center text-lg font-bold text-[#4A7D64]">
                             {apt.patient.charAt(0)}
@@ -717,9 +717,9 @@ function DoctorPortal({ user, onLogout }) {
                             <p className="text-xs text-[#9CB299] font-bold">{apt.date}</p>
                           </div>
                         </div>
-                        <div className="flex gap-2">
-                          <button className="px-4 py-2 bg-[#F3F6F3] rounded-full text-sm font-bold hover:bg-[#E4EDE5] transition-colors">Reschedule</button>
-                          <button className="px-4 py-2 bg-[#233229] text-white rounded-full text-sm font-bold hover:bg-[#1a251e] transition-colors">Join</button>
+                        <div className="grid w-full grid-cols-2 gap-2 sm:w-auto">
+                          <button className="rounded-full bg-[#F3F6F3] px-3 py-2 text-sm font-bold transition-colors hover:bg-[#E4EDE5]">Reschedule</button>
+                          <button className="rounded-full bg-[#233229] px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-[#1a251e]">Join</button>
                         </div>
                       </div>
                     </WidgetCard>
@@ -1005,7 +1005,7 @@ function PortalLayout({ children, user, navItems, onLogout, onNavClick }) {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col relative z-0">
+      <div className="relative z-0 flex min-h-0 min-w-0 flex-1 flex-col">
         <button
           onClick={onLogout}
           className="fixed bottom-5 right-5 z-40 flex items-center gap-2 rounded-full bg-[#233229] px-4 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-[#354b3c] md:hidden"
