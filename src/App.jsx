@@ -140,9 +140,35 @@ export default function App() {
 // 1. ADMIN PORTAL
 function AdminPortal({ user, onLogout }) {
   const [viewMode, setViewMode] = useState('overview');
+  const [providers, setProviders] = useState(INITIAL_DOCTORS);
+  const [showAddProvider, setShowAddProvider] = useState(false);
+  const [providerForm, setProviderForm] = useState({
+    name: '',
+    specialty: '',
+    email: '',
+    phone: '',
+    clinic: '',
+  });
 
   const handleNavClick = (idx) => {
     setViewMode(['overview', 'staff', 'security'][idx]);
+  };
+
+  const handleProviderFormChange = (e) => {
+    setProviderForm({ ...providerForm, [e.target.name]: e.target.value });
+  };
+
+  const handleAddProvider = (e) => {
+    e.preventDefault();
+    const provider = {
+      ...providerForm,
+      id: `doc${String(providers.length + 1).padStart(2, '0')}`,
+      available: true,
+    };
+    setProviders([provider, ...providers]);
+    setProviderForm({ name: '', specialty: '', email: '', phone: '', clinic: '' });
+    setShowAddProvider(false);
+    setViewMode('staff');
   };
 
   return (
@@ -157,7 +183,7 @@ function AdminPortal({ user, onLogout }) {
             <h1 className="text-3xl font-extrabold tracking-tight">System Overview</h1>
             <p className="text-[#5A7A62] font-medium mt-1">Manage global hospital settings and personnel.</p>
           </div>
-          <button className="bg-[#233229] text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-[#1a251e] transition-colors flex items-center gap-2 shadow-lg">
+          <button type="button" onClick={() => setShowAddProvider(true)} className="bg-[#233229] text-white px-6 py-3 rounded-full text-sm font-bold hover:bg-[#1a251e] transition-colors flex items-center gap-2 shadow-lg">
             <UserPlus size={18} /> Add Provider
           </button>
         </div>}
@@ -167,7 +193,7 @@ function AdminPortal({ user, onLogout }) {
             <h1 className="text-3xl font-extrabold tracking-tight">Staff Directory</h1>
             <p className="text-[#5A7A62] font-medium mt-1 mb-8">Review providers registered in the Lexis system.</p>
             <WidgetCard className="p-0 overflow-hidden">
-              {INITIAL_DOCTORS.map((doctor) => (
+              {providers.map((doctor) => (
                 <div key={doctor.id} className="flex items-center justify-between border-b border-[#E4EDE5] p-5 last:border-b-0">
                   <div><p className="font-extrabold">{doctor.name}</p><p className="text-sm font-medium text-[#5A7A62]">{doctor.specialty} · {doctor.email}</p></div>
                   <PillTag label={doctor.available ? 'Available' : 'Unavailable'} active={doctor.available} />
@@ -239,6 +265,40 @@ function AdminPortal({ user, onLogout }) {
           </div>
         </WidgetCard></>}
       </div>
+
+      {showAddProvider && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#233229]/50 p-4" onMouseDown={(e) => e.target === e.currentTarget && setShowAddProvider(false)}>
+          <form onSubmit={handleAddProvider} className="w-full max-w-lg rounded-[32px] bg-white p-6 shadow-2xl md:p-8">
+            <div className="mb-6 flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#5A7A62]">Staff directory</p>
+                <h2 className="mt-2 text-2xl font-extrabold">Add provider</h2>
+              </div>
+              <button type="button" onClick={() => setShowAddProvider(false)} className="rounded-full bg-[#F3F6F3] px-3 py-2 text-xl leading-none text-[#5A7A62] hover:bg-[#E4EDE5]" aria-label="Close form">×</button>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              {[
+                ['name', 'Full name', 'Dr. Ananya Rao'],
+                ['specialty', 'Specialty', 'Cardiology'],
+                ['email', 'Email address', 'ananya.rao@hospital.com'],
+                ['phone', 'Phone number', '+91 9876543214'],
+                ['clinic', 'Clinic', 'Heart Care Center'],
+              ].map(([name, label, placeholder]) => (
+                <label key={name} className={`${name === 'clinic' ? 'sm:col-span-2' : ''} block`}>
+                  <span className="mb-2 block text-sm font-bold text-[#233229]">{label}</span>
+                  <input name={name} value={providerForm[name]} onChange={handleProviderFormChange} placeholder={placeholder} required className="w-full rounded-xl border border-[#D3DED4] px-4 py-3 text-sm font-semibold outline-none focus:border-[#5A7A62] focus:ring-4 focus:ring-[#9CB299]/25" />
+                </label>
+              ))}
+            </div>
+
+            <div className="mt-7 flex justify-end gap-3">
+              <button type="button" onClick={() => setShowAddProvider(false)} className="rounded-full px-5 py-3 text-sm font-bold text-[#5A7A62] hover:bg-[#F3F6F3]">Cancel</button>
+              <button type="submit" className="rounded-full bg-[#233229] px-6 py-3 text-sm font-bold text-white shadow-lg hover:bg-[#1a251e]">Create provider</button>
+            </div>
+          </form>
+        </div>
+      )}
     </PortalLayout>
   );
 }
